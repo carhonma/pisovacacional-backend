@@ -1858,6 +1858,43 @@ public class FirebaseController {
             this.pass = pass;
         }
     }
+    @PostMapping("/guardarTexto")
+    public ResponseEntity<Map<String, Object>> guardarTexto(@RequestBody Map<String, Object> payload) {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            String texto1 = (String) payload.get("texto1");
+            String texto2 = (String) payload.get("texto2");
+
+            if (texto1 == null || texto2 == null) {
+                response.put("error", "Datos inválidos: se requiere 'texto1' y 'texto2'.");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            Firestore db = FirestoreClient.getFirestore();
+
+            // Guardar texto1 en documento "texto1"
+            DocumentReference docRef1 = db.collection("textos").document("texto1");
+            ApiFuture<WriteResult> writeResult1 = docRef1.set(Map.of("texto", texto1));
+
+            // Guardar texto2 en documento "texto2"
+            DocumentReference docRef2 = db.collection("textos").document("texto2");
+            ApiFuture<WriteResult> writeResult2 = docRef2.set(Map.of("texto", texto2));
+
+            // Esperar a que ambas operaciones finalicen
+            writeResult1.get();
+            writeResult2.get();
+
+            response.put("status", "ok");
+            response.put("mensaje", "Textos guardados correctamente");
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.put("error", "Error al guardar textos");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
     @PostMapping("/guardarDias")
     public ResponseEntity<Map<String, Object>> guardarDias(@RequestBody Map<String, Object> payload) {
         Map<String, Object> response = new HashMap<>();
