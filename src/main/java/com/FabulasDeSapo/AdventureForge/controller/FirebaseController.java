@@ -1892,34 +1892,50 @@ public class FirebaseController {
         }
     }
     @GetMapping("/getDias")
-    public ResponseEntity<Map<String, Object>> getDias(
-            @RequestParam String mes) {
+public ResponseEntity<Map<String, Object>> getDias(@RequestParam String mes) {
 
-        Map<String, Object> response = new HashMap<>();
+    Map<String, Object> response = new HashMap<>();
 
-        try {
-            Firestore db = FirestoreClient.getFirestore();
-            DocumentReference docRef = db.collection("days").document("reserved");
-            DocumentSnapshot snapshot = docRef.get().get();
+    try {
+        Firestore db = FirestoreClient.getFirestore();
+        DocumentReference docRef = db.collection("days").document("reserved");
+        DocumentSnapshot snapshot = docRef.get().get();
 
-            if (!snapshot.exists()) {
-                response.put("dias", List.of()); // No hay datos
-                return ResponseEntity.ok(response);
-            }
-
-            // Leemos el array correspondiente al mes
-            List<Long> dias = (List<Long>) snapshot.get(mes);
-            if (dias == null) {
-                dias = List.of(); // Si el mes no existe
-            }
-
-            response.put("dias", dias);
+        if (!snapshot.exists()) {
+            response.put("dias", List.of()); // No hay datos
             return ResponseEntity.ok(response);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            response.put("error", "Error al obtener días");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
+
+        // Leemos la lista como List<Object>
+        List<Object> diasObj = (List<Object>) snapshot.get(mes);
+
+        List<Long> dias;
+        if (diasObj == null) {
+            dias = List.of(); // Si no existe el mes
+        } else {
+            // Convertimos cada objeto a Long (asumiendo que son números)
+            dias = diasObj.stream()
+                .map(o -> {
+                    if (o instanceof Integer) {
+                        return ((Integer) o).longValue();
+                    } else if (o instanceof Long) {
+                        return (Long) o;
+                    } else if (o instanceof Double) {
+                        return ((Double) o).longValue();
+                    } else {
+                        return 0L; // fallback o lanzar excepción si prefieres
+                    }
+                })
+                .toList();
+        }
+
+        response.put("dias", dias);
+        return ResponseEntity.ok(response);
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        response.put("error", "Error al obtener días");
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
+}
 }
