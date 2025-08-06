@@ -1891,5 +1891,66 @@ public class FirebaseController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
+    @GetMapping("/getDias")
+    public ResponseEntity<Map<String, Object>> getDias(
+            @RequestParam String mes) {
 
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            Firestore db = FirestoreClient.getFirestore();
+            DocumentReference docRef = db.collection("days").document("reserved");
+            DocumentSnapshot snapshot = docRef.get().get();
+
+            if (!snapshot.exists()) {
+                response.put("dias", List.of()); // No hay datos
+                return ResponseEntity.ok(response);
+            }
+
+            // Leemos el array correspondiente al mes
+            List<Long> dias = (List<Long>) snapshot.get(mes);
+            if (dias == null) {
+                dias = List.of(); // Si el mes no existe
+            }
+
+            response.put("dias", dias);
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.put("error", "Error al obtener días");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+    @GetMapping("/getDias")
+    public ResponseEntity<Map<String, Object>> getDias(
+            @RequestParam String mes) {
+
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            Firestore db = FirestoreClient.getFirestore();
+            DocumentReference docRef = db.collection("days").document("reserved");
+            DocumentSnapshot snapshot = docRef.get().get();
+
+            if (!snapshot.exists()) {
+                response.put("dias", List.of()); // No hay datos
+                return ResponseEntity.ok(response);
+            }
+
+            // Leemos el array correspondiente al mes
+            List<Long> dias = (List<Long>) snapshot.get(mes);
+            if (dias == null) {
+                dias = List.of(); // Si el mes no existe
+            }
+
+            response.put("dias", dias);
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.put("error", "Error al obtener días");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
 }
