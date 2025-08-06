@@ -1780,21 +1780,24 @@ public class FirebaseController {
         }
     }
 
-    @GetMapping("/gettext1")
+    @GetMapping("/gettext")
     public ResponseEntity<Map<String, Object>> gettext1() {
         Map<String, Object> response = new HashMap<>();
 
         try {
             Firestore db = FirestoreClient.getFirestore();
-            DocumentReference docRef = db.collection("textos").document("texto1");
-            DocumentSnapshot userDoc = docRef.get().get();
+            DocumentReference docRef1 = db.collection("textos").document("texto1");
+            DocumentReference docRef2 = db.collection("textos").document("texto2");
+            DocumentSnapshot userDoc1 = docRef1.get().get();
+            DocumentSnapshot userDoc2 = docRef2.get().get();
 
-            if (!userDoc.exists()) {
+            if (!userDoc1.exists()||!userDoc2.exists()) {
                 response.put("error", "El doc no existe.");
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
             }
 
-            response.put("texto", userDoc.getData());
+            response.put("texto1", userDoc1.getData());
+            response.put("texto2", userDoc2.getData());
 
             return ResponseEntity.ok(response);
 
