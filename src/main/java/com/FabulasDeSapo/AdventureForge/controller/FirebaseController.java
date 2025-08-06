@@ -1892,7 +1892,7 @@ public class FirebaseController {
         }
     }
     @GetMapping("/getDias")
-public ResponseEntity<Map<String, Object>> getDias(@RequestParam String mes) {
+    public ResponseEntity<Map<String, Object>> getDias(@RequestParam("mes") String mes) {
 
     Map<String, Object> response = new HashMap<>();
 
