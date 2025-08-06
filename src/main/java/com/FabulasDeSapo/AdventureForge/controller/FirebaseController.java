@@ -1855,5 +1855,41 @@ public class FirebaseController {
             this.pass = pass;
         }
     }
+    @PostMapping("/guardarDias")
+    public ResponseEntity<Map<String, Object>> guardarDias(@RequestBody Map<String, Object> payload) {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            String mes = (String) payload.get("mes");
+            List<Integer> dias = (List<Integer>) payload.get("dias");
+
+            if (mes == null || dias == null) {
+                response.put("error", "Datos inválidos: se requiere 'mes' y 'dias'.");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            Firestore db = FirestoreClient.getFirestore();
+
+            // Documento donde guardaremos los datos
+            DocumentReference docRef = db.collection("days").document("reserved");
+
+            // Actualiza o crea el campo para este mes
+            ApiFuture<WriteResult> writeResult = docRef.set(
+                    Map.of(mes, dias),
+                    SetOptions.merge() // ← Esto asegura que no se borren otros meses
+            );
+
+            writeResult.get(); // Espera a que termine la operación
+
+            response.put("status", "ok");
+            response.put("mensaje", "Días guardados correctamente");
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.put("error", "Error al guardar días");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
 
 }
