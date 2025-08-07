@@ -1788,16 +1788,31 @@ public class FirebaseController {
             Firestore db = FirestoreClient.getFirestore();
             DocumentReference docRef1 = db.collection("textos").document("texto1");
             DocumentReference docRef2 = db.collection("textos").document("texto2");
+            DocumentReference docRef3 = db.collection("textos").document("textoVivienda");
+            DocumentReference docRef4 = db.collection("textos").document("textoPrecio");
+            DocumentReference docRef5 = db.collection("textos").document("textoCondiciones");
+            DocumentReference docRef6 = db.collection("textos").document("textoMapa");
+            DocumentReference docRef7 = db.collection("textos").document("textoContacto");
             DocumentSnapshot userDoc1 = docRef1.get().get();
             DocumentSnapshot userDoc2 = docRef2.get().get();
+            DocumentSnapshot userDoc3 = docRef3.get().get();
+            DocumentSnapshot userDoc4 = docRef4.get().get();
+            DocumentSnapshot userDoc5 = docRef5.get().get();
+            DocumentSnapshot userDoc6 = docRef6.get().get();
+            DocumentSnapshot userDoc7 = docRef7.get().get();
 
-            if (!userDoc1.exists()||!userDoc2.exists()) {
+            if (!userDoc1.exists()||!userDoc2.exists()||!userDoc3.exists()||!userDoc4.exists()||!userDoc5.exists()||!userDoc6.exists()||!userDoc7.exists()) {
                 response.put("error", "El doc no existe.");
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
             }
 
             response.put("texto1", userDoc1.getData());
             response.put("texto2", userDoc2.getData());
+            response.put("texto3", userDoc3.getData());
+            response.put("texto4", userDoc4.getData());
+            response.put("texto5", userDoc5.getData());
+            response.put("texto6", userDoc6.getData());
+            response.put("texto7", userDoc7.getData());
 
             return ResponseEntity.ok(response);
 
@@ -1865,25 +1880,30 @@ public class FirebaseController {
         try {
             String texto1 = (String) payload.get("texto1");
             String texto2 = (String) payload.get("texto2");
-
-            if (texto1 == null || texto2 == null) {
-                response.put("error", "Datos inválidos: se requiere 'texto1' y 'texto2'.");
-                return ResponseEntity.badRequest().body(response);
-            }
+            String textoVivienda = (String) payload.get("textoVivienda");
+            String textoPrecio = (String) payload.get("textoPrecio");
+            String textoCondiciones = (String) payload.get("textoCondiciones");
+            String textoMapa = (String) payload.get("textoMapa");
+            String textoContacto = (String) payload.get("textoContacto");
 
             Firestore db = FirestoreClient.getFirestore();
 
-            // Guardar texto1 en documento "texto1"
             DocumentReference docRef1 = db.collection("textos").document("texto1");
             ApiFuture<WriteResult> writeResult1 = docRef1.set(Map.of("texto", texto1));
-
-            // Guardar texto2 en documento "texto2"
             DocumentReference docRef2 = db.collection("textos").document("texto2");
             ApiFuture<WriteResult> writeResult2 = docRef2.set(Map.of("texto", texto2));
+            DocumentReference docRef3 = db.collection("textos").document("textoVivienda");
+            ApiFuture<WriteResult> writeResult3 = docRef3.set(Map.of("texto", textoVivienda));
+            DocumentReference docRef4 = db.collection("textos").document("textoPrecio");
+            ApiFuture<WriteResult> writeResult4 = docRef4.set(Map.of("texto", textoPrecio));
+            DocumentReference docRef5 = db.collection("textos").document("textoCondiciones");
+            ApiFuture<WriteResult> writeResult5 = docRef5.set(Map.of("texto", textoCondiciones));
+            DocumentReference docRef6 = db.collection("textos").document("textoMapa");
+            ApiFuture<WriteResult> writeResult6 = docRef6.set(Map.of("texto", textoMapa));
+            DocumentReference docRef7 = db.collection("textos").document("textoContacto");
+            ApiFuture<WriteResult> writeResult7 = docRef7.set(Map.of("texto", textoContacto));
 
-            // Esperar a que ambas operaciones finalicen
-            writeResult1.get();
-            writeResult2.get();
+            writeResult1.get();writeResult2.get();writeResult3.get();writeResult4.get();writeResult5.get();writeResult6.get();writeResult7.get();
 
             response.put("status", "ok");
             response.put("mensaje", "Textos guardados correctamente");
