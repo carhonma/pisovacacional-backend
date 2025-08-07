@@ -1808,11 +1808,11 @@ public class FirebaseController {
 
             response.put("texto1", userDoc1.getData());
             response.put("texto2", userDoc2.getData());
-            response.put("texto3", userDoc3.getData());
-            response.put("texto4", userDoc4.getData());
-            response.put("texto5", userDoc5.getData());
-            response.put("texto6", userDoc6.getData());
-            response.put("texto7", userDoc7.getData());
+            response.put("textoVivienda", userDoc3.getData());
+            response.put("textoPrecio", userDoc4.getData());
+            response.put("textoCondiciones", userDoc5.getData());
+            response.put("textoMapa", userDoc6.getData());
+            response.put("textoContacto", userDoc7.getData());
 
             return ResponseEntity.ok(response);
 
